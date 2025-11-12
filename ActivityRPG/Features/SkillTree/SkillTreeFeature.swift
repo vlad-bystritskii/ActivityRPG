@@ -17,7 +17,6 @@ public struct SkillTreeFeature {
         var nodes: [SkillNodeDTO] = []
         var unlocked: Set<UUID> = []
         var selected: UUID?
-        // Персистим только итоговые значения, не кадр-в-кадр
         var offset: CGPoint = .zero
         var scale: Double = 1.0
     }
@@ -29,7 +28,6 @@ public struct SkillTreeFeature {
         case nodeTapped(UUID)
         case toggleUnlock(UUID)
         case unlocksUpdated(Set<UUID>)
-        // Коммиты от View после завершения жестов
         case commitPan(CGPoint)
         case commitScale(Double)
     }

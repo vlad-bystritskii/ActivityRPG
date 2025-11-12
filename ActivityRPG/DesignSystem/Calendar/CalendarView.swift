@@ -22,6 +22,16 @@ struct CalendarView: View {
 
     var body: some View {
         VStack(spacing: 8) {
+            Text(
+                DateFormatters.monthYearString(
+                    selectedDate,
+                    calendar,
+                    locale
+                ).firstUppercased
+            )
+            .font(.headline)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
             HStack {
                 ForEach(weekdaySymbols(), id: \.self) { symbol in
                     Text(symbol.uppercased())
@@ -58,11 +68,6 @@ struct CalendarView: View {
             .onChange(of: weekPageOffset) { _, newValue in
                 recenterIfNeeded(newValue)
             }
-
-            let currentWeekStart: Date = calendar.date(byAdding: .day, value: weekPageOffset * 7, to: anchorWeekStartDate) ?? anchorWeekStartDate
-            Text(weekTitle(for: currentWeekStart))
-                .font(.caption)
-                .foregroundStyle(.secondary)
         }
         .padding(.horizontal)
         .onAppear {
@@ -74,7 +79,12 @@ struct CalendarView: View {
     private func recenterIfNeeded(_ newOffset: Int) -> Void {
         guard abs(newOffset) >= surroundingPagesBuffer - 1 else { return }
         let shiftWeeks: Int = newOffset
-        let newAnchor: Date = calendar.date(byAdding: .day, value: shiftWeeks * 7, to: anchorWeekStartDate) ?? anchorWeekStartDate
+        let newAnchor: Date = calendar.date(
+            byAdding: .day,
+            value: shiftWeeks * 7,
+            to: anchorWeekStartDate
+        ) ?? anchorWeekStartDate
+
         withAnimation(nil) {
             anchorWeekStartDate = newAnchor
             weekPageOffset = 0
@@ -90,35 +100,6 @@ struct CalendarView: View {
             symbols = Array(head + tail)
         }
         return symbols
-    }
-
-    private func weekTitle(for start: Date) -> String {
-        let end: Date = calendar.date(byAdding: .day, value: 6, to: start) ?? start
-        let isSameMonth: Bool = calendar.isDate(start, equalTo: end, toGranularity: .month)
-        let isSameYear: Bool = calendar.isDate(start, equalTo: end, toGranularity: .year)
-
-        if isSameMonth && isSameYear {
-            let left: String = DateFormatters.shortDayMonth(start, calendar, locale)
-            let rightDay: Int = calendar.component(.day, from: end)
-            let rightMonth: String = DateFormatters.monthAbbreviation(
-                end,
-                calendar,
-                locale
-            )
-            let year: String = DateFormatters.yearString(end, calendar, locale)
-            return "\(left)–\(rightDay) \(rightMonth) \(year)"
-        } else if isSameYear {
-            let left: String = DateFormatters.shortDayMonth(start, calendar, locale)
-            let right: String = DateFormatters.shortDayMonth(end, calendar, locale)
-            let year: String = DateFormatters.yearString(end, calendar, locale)
-            return "\(left) – \(right) \(year)"
-        } else {
-            let left: String = DateFormatters.shortDayMonth(start, calendar, locale)
-            let leftYear: String = DateFormatters.yearString(start, calendar, locale)
-            let right: String = DateFormatters.shortDayMonth(end, calendar, locale)
-            let rightYear: String = DateFormatters.yearString(end, calendar, locale)
-            return "\(left) \(leftYear) – \(right) \(rightYear)"
-        }
     }
 }
 

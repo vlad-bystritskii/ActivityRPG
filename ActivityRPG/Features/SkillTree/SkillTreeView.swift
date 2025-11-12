@@ -11,7 +11,6 @@ import ComposableArchitecture
 struct SkillTreeView: View {
     let store: StoreOf<SkillTreeFeature>
 
-    // Локальная динамика жестов (кадр-в-кадр)
     @GestureState private var drag: CGSize = .zero
     @GestureState private var pinch: CGFloat = 1.0
     @State private var baseOffset: CGPoint = .zero
@@ -20,13 +19,16 @@ struct SkillTreeView: View {
     var body: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
             GeometryReader { proxy in
-                // Синхронизируем базовые значения с состоянием стора
                 Color.clear.onAppear {
                     baseOffset = viewStore.offset
                     baseScale  = viewStore.scale
                 }
-                .onChange(of: viewStore.offset) { baseOffset = $0 }
-                .onChange(of: viewStore.scale) { baseScale  = $0 }
+                .onChange(of: viewStore.offset) { _, offset in
+                    baseOffset = offset
+                }
+                .onChange(of: viewStore.scale) { _, scale in
+                    baseScale = scale
+                }
 
                 let currentScale  = (baseScale * pinch).clamped(0.5, 2.0)
                 let currentOffset = CGPoint(
@@ -34,16 +36,11 @@ struct SkillTreeView: View {
                     y: baseOffset.y + drag.height
                 )
 
-                // Аффинный трансформ: сначала масштаб, затем сдвиг (эквивалент .scaleEffect затем .offset)
                 let transform = CGAffineTransform.identity
                     .scaledBy(x: currentScale, y: currentScale)
                     .translatedBy(x: currentOffset.x, y: currentOffset.y)
 
-                // Контент графа в «базовых» координатах (0…1 * размер контейнера).
-                // ВАЖНО: Ниже НЕТ умножений на offset/scale у каждого узла —
-                // они применяются один раз к контейнеру (GPU-трансформ).
                 ZStack {
-                    // edges — в базовых координатах
                     Canvas { ctx, size in
                         let nodes = viewStore.nodes
                         let map = Dictionary(uniqueKeysWithValues: nodes.map { ($0.id, $0) })
@@ -60,13 +57,14 @@ struct SkillTreeView: View {
                             }
                         }
                     }
-                    .allowsHitTesting(false)           // Canvas не участвует в хит-тесте
+                    .allowsHitTesting(false)
                     .transaction { $0.animation = nil }
 
-                    // nodes — тоже в базовых координатах
                     ForEach(viewStore.nodes) { node in
-                        let p = CGPoint(x: node.posX * proxy.size.width,
-                                        y: node.posY * proxy.size.height)
+                        let p = CGPoint(
+                            x: node.posX * proxy.size.width,
+                            y: node.posY * proxy.size.height
+                        )
                         NodeView(
                             title: node.title,
                             sphere: node.sphere,
@@ -78,11 +76,10 @@ struct SkillTreeView: View {
                         .onLongPressGesture { viewStore.send(.toggleUnlock(node.id)) }
                     }
                 }
-                .transformEffect(transform)           // единый GPU-трансформ
-                .contentShape(Rectangle())            // фиксируем хит-тест на контейнере
+                .transformEffect(transform)
+                .contentShape(Rectangle())
                 .transaction { $0.animation = nil }
 
-                // Жесты — одновременно, без конкуренции
                 .simultaneousGesture(
                     MagnificationGesture()
                         .updating($pinch) { value, state, _ in state = value }
@@ -93,7 +90,7 @@ struct SkillTreeView: View {
                         }
                 )
                 .simultaneousGesture(
-                    DragGesture(minimumDistance: 3)  // меньше дребезга событий
+                    DragGesture(minimumDistance: 3)
                         .updating($drag) { value, state, _ in state = value.translation }
                         .onEnded { value in
                             baseOffset.x += value.translation.width
@@ -131,13 +128,13 @@ private struct NodeView: View {
     private func color(for s: Sphere) -> Color {
         switch s {
         case .agility:
-                .blue
+            return Color.blue
         case .strength:
-                .red
+            return Color.red
         case .flexibility:
-                .green
+            return Color.green
         case .endurance:
-                .orange
+            return Color.orange
         }
     }
 }

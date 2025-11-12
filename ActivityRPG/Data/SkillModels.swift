@@ -8,25 +8,30 @@
 import Foundation
 import SwiftData
 
-public enum Sphere: String, Codable, CaseIterable { case runner, strength, grappler, scout }
+public enum Sphere: String, Codable, CaseIterable, Sendable {
+    case agility
+    case strength
+    case flexibility
+    case endurance
+}
 
 @Model
 public final class SkillNode: Identifiable, Equatable {
-    @Attribute(.unique) public var id: UUID
-    public var title: String
-    public var sphere: Sphere
-    public var posX: Double
-    public var posY: Double
-    public var cost: Int
-    public var requires: [UUID]
-    public var effectsJSON: String?
-
+    @Attribute(.unique) public var id: UUID = UUID()
+    public var title: String = ""
+    public var sphere: Sphere = Sphere.agility
+    public var posX: Double = 0             
+    public var posY: Double = 0
+    public var cost: Int = 1
+    public var requires: [UUID] = []         
+    public var effectsJSON: String? = nil
+    
     public init(
         id: UUID = UUID(),
-        title: String,
-        sphere: Sphere,
-        posX: Double,
-        posY: Double,
+        title: String = "",
+        sphere: Sphere = .agility,
+        posX: Double = 0,
+        posY: Double = 0,
         cost: Int = 1,
         requires: [UUID] = [],
         effectsJSON: String? = nil
@@ -44,10 +49,10 @@ public final class SkillNode: Identifiable, Equatable {
 
 @Model
 public final class SkillUnlock: Identifiable, Equatable {
-    @Attribute(.unique) public var id: UUID
-    public var nodeId: UUID
-    public var unlockedAt: Date
-
+    @Attribute(.unique) public var id: UUID = UUID()
+    public var nodeId: UUID = UUID()
+    public var unlockedAt: Date = Date.now
+    
     public init(id: UUID = UUID(), nodeId: UUID, unlockedAt: Date = .now) {
         self.id = id
         self.nodeId = nodeId

@@ -6,30 +6,107 @@
 //
 
 import SwiftData
+import Foundation
 
+@MainActor
 enum SkillSeed {
     static func seedIfNeeded(container: ModelContainer) throws {
         let ctx = ModelContext(container)
         let count = try ctx.fetchCount(FetchDescriptor<SkillNode>())
         guard count == 0 else { return }
 
-        let r0 = SkillNode(title: "Путь Бегуна", sphere: .runner,   posX: 0.15, posY: 0.50)
-        let r1 = SkillNode(title: "+2% к темпу", sphere: .runner,    posX: 0.25, posY: 0.40, requires: [r0.id])
-        let r2 = SkillNode(title: "+3 выносливости", sphere: .runner,posX: 0.25, posY: 0.60, requires: [r0.id])
+        let center = SkillNode()
+        center.title = "Я"
+        center.sphere = .agility
+        center.posX = 0.5
+        center.posY = 0.5
+        center.cost = 0
+        ctx.insert(center)
 
-        let s0 = SkillNode(title: "Путь Силы", sphere: .strength,    posX: 0.50, posY: 0.80)
-        let s1 = SkillNode(title: "+1 к силе", sphere: .strength,    posX: 0.60, posY: 0.78, requires: [s0.id])
+        // Помощники
+        func polar(_ angleDeg: Double, _ r: Double) -> (x: Double, y: Double) {
+            let a = angleDeg * .pi / 180
+            let x = 0.5 + cos(a) * r
+            let y = 0.5 + sin(a) * r
+            return (x, y)
+        }
 
-        let g0 = SkillNode(title: "Путь Борца", sphere: .grappler,   posX: 0.80, posY: 0.55)
-        let g1 = SkillNode(title: "+ловкость", sphere: .grappler,    posX: 0.70, posY: 0.50, requires: [g0.id])
+        @discardableResult
+        func makeBranch(
+            title: String,
+            sphere: Sphere,
+            angle: Double,
+            steps: Int = 10,
+            rStart: Double = 0.12,
+            rEnd: Double = 0.45
+        ) -> [SkillNode] {
+            var out: [SkillNode] = []
+            var prev: SkillNode? = nil
 
-        let sc0 = SkillNode(title: "Путь Следопыта", sphere: .scout, posX: 0.45, posY: 0.20)
-        let sc1 = SkillNode(title: "+ориентирование", sphere: .scout,posX: 0.55, posY: 0.22, requires: [sc0.id])
+            for i in 1...steps {
+                let t = Double(i) / Double(steps)
+                let r = rStart + (rEnd - rStart) * t
+                let (x, y) = polar(angle, r)
 
-        let b1 = SkillNode(title: "Подвижность", sphere: .runner, posX: 0.40, posY: 0.45, cost: 2, requires: [r1.id, s0.id])
-        let b2 = SkillNode(title: "Выносливость клинча", sphere: .grappler, posX: 0.65, posY: 0.60, cost: 2, requires: [s1.id, g0.id])
+                let n = SkillNode()
+                n.title  = "\(title) \(i)"
+                n.sphere = sphere
+                n.posX   = x
+                n.posY   = y
+                n.cost   = (i % 3 == 0) ? 2 : 1
 
-        [r0,r1,r2,s0,s1,g0,g1,sc0,sc1,b1,b2].forEach { ctx.insert($0) }
+                if let p = prev {
+                    n.requires = [p.id]
+                } else {
+                    n.requires = [center.id]
+                }
+
+                ctx.insert(n)
+                out.append(n)
+                prev = n
+            }
+
+
+            if out.count >= 6 {
+                out[5].requires.append(out[2].id)
+            }
+            if out.count >= 9 {
+                out[8].requires.append(out[4].id)
+            }
+
+            return out
+        }
+
+
+        let agility = makeBranch(
+            title: "Ловкость",
+            sphere: .agility,
+            angle: -90
+        )
+        let strength = makeBranch(
+            title: "Сила",
+            sphere: .strength,
+            angle:   0
+        )
+        let flexibility = makeBranch(
+            title: "Гибкость",
+            sphere: .flexibility,
+            angle: 180
+        )
+        let endurance = makeBranch(
+            title: "Выносливость",
+            sphere: .endurance,
+            angle:  90
+        )
+
+
+        if agility.count > 3, strength.count > 3 {
+            agility[3].requires.append(strength[2].id)
+        }
+        if flexibility.count > 4, endurance.count > 4 {
+            flexibility[4].requires.append(endurance[3].id)
+        }
+
         try ctx.save()
     }
 }
