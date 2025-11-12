@@ -48,7 +48,7 @@ struct CreateExerciseView: View {
                                 Spacer()
                                 if viewStore.measurements.contains(kind) {
                                     Image(systemName: "checkmark")
-                                        .foregroundStyle(.accent)
+                                        .foregroundStyle(.background)
                                 }
                             }
                         }

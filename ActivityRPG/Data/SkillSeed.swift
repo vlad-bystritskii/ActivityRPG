@@ -23,7 +23,6 @@ enum SkillSeed {
         center.cost = 0
         ctx.insert(center)
 
-        // Помощники
         func polar(_ angleDeg: Double, _ r: Double) -> (x: Double, y: Double) {
             let a = angleDeg * .pi / 180
             let x = 0.5 + cos(a) * r

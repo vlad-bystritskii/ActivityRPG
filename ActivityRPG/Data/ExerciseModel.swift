@@ -14,7 +14,7 @@ public final class ExerciseModel {
     public var createdAt: Date
     public var type: ExerciseType
     public var name: String
-    public var measurements: [MeasurementKind]   // первый — основной
+    public var measurements: [MeasurementKind]
 
     public init(
         id: UUID = .init(),

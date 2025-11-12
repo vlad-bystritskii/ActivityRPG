@@ -29,7 +29,7 @@ public final class SkillNode: Identifiable, Equatable {
     public init(
         id: UUID = UUID(),
         title: String = "",
-        sphere: Sphere = .agility,
+        sphere: Sphere = Sphere.agility,
         posX: Double = 0,
         posY: Double = 0,
         cost: Int = 1,
