@@ -10,10 +10,14 @@ import SwiftData
 
 private enum ModelContainerKey: DependencyKey {
   static let liveValue: ModelContainer = {
-    try! ModelContainer(
-      for: Schema([SkillNode.self, SkillUnlock.self, ExerciseModel.self]),
-      configurations: [ModelConfiguration(isStoredInMemoryOnly: true)]
-    )
+    do {
+      return try ModelContainer(
+        for: Schema([SkillNode.self, SkillUnlock.self, ExerciseModel.self]),
+        configurations: [ModelConfiguration(isStoredInMemoryOnly: true)]
+      )
+    } catch {
+      fatalError("Failed to create ModelContainer: \(error)")
+    }
   }()
   static let testValue = liveValue
 }

@@ -20,14 +20,18 @@ extension Date {
 
     var weekStrip: [Date] {
         let calendar: Calendar = Calendar.current
-        let interval: DateInterval = calendar.dateInterval(of: .weekOfYear, for: self.startOfDay)!
-        return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: interval.start)! }
+        guard let interval = calendar.dateInterval(of: .weekOfYear, for: self.startOfDay) else {
+            return []
+        }
+        return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: interval.start) }
     }
 
     var dayBounds: (Date, Date) {
         let calendar: Calendar = Calendar.current
         let start: Date = calendar.startOfDay(for: self)
-        let end: Date = calendar.date(byAdding: .day, value: 1, to: start)!
+        guard let end = calendar.date(byAdding: .day, value: 1, to: start) else {
+            return (start, start.addingTimeInterval(86400))
+        }
         return (start, end)
     }
 }

@@ -17,7 +17,7 @@ enum SkillSeed {
 
         let center = SkillNode()
         center.title = "Я"
-        center.sphere = .agility
+        center.attribute = .agility
         center.posX = 0.5
         center.posY = 0.5
         center.cost = 0
@@ -33,7 +33,7 @@ enum SkillSeed {
         @discardableResult
         func makeBranch(
             title: String,
-            sphere: Sphere,
+            attribute: Attribute,
             angle: Double,
             steps: Int = 10,
             rStart: Double = 0.12,
@@ -49,7 +49,7 @@ enum SkillSeed {
 
                 let n = SkillNode()
                 n.title = "\(title) \(i)"
-                n.sphere = sphere
+                n.attribute = attribute
                 n.posX = x
                 n.posY = y
                 n.cost = (i % 3 == 0) ? 2 : 1
@@ -79,22 +79,22 @@ enum SkillSeed {
 
         let agility = makeBranch(
             title: "Ловкость",
-            sphere: .agility,
+            attribute: .agility,
             angle: -90
         )
         let strength = makeBranch(
             title: "Сила",
-            sphere: .strength,
+            attribute: .strength,
             angle: 0
         )
         let flexibility = makeBranch(
             title: "Гибкость",
-            sphere: .flexibility,
+            attribute: .flexibility,
             angle: 180
         )
         let endurance = makeBranch(
             title: "Выносливость",
-            sphere: .endurance,
+            attribute: .endurance,
             angle: 90
         )
 

@@ -48,7 +48,7 @@ public struct SkillTreeFeature {
                             let models = try ctx.fetch(FetchDescriptor<SkillNode>())
                             return models.map {
                                 SkillNodeDTO(
-                                    id: $0.id, title: $0.title, sphere: $0.sphere,
+                                    id: $0.id, title: $0.title, attribute: $0.attribute,
                                     posX: $0.posX, posY: $0.posY, cost: $0.cost, requires: $0.requires
                                 )
                             }

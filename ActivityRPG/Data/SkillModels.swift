@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-public enum Sphere: String, Codable, CaseIterable, Sendable {
+public enum Attribute: String, Codable, CaseIterable, Sendable {
     case agility
     case strength
     case flexibility
@@ -19,7 +19,7 @@ public enum Sphere: String, Codable, CaseIterable, Sendable {
 public final class SkillNode: Identifiable, Equatable {
     @Attribute(.unique) public var id: UUID = UUID()
     public var title: String = ""
-    public var sphere: Sphere = Sphere.agility
+    public var attribute: Attribute = Attribute.agility
     public var posX: Double = 0
     public var posY: Double = 0
     public var cost: Int = 1
@@ -29,7 +29,7 @@ public final class SkillNode: Identifiable, Equatable {
     public init(
         id: UUID = UUID(),
         title: String = "",
-        sphere: Sphere = Sphere.agility,
+        attribute: Attribute = Attribute.agility,
         posX: Double = 0,
         posY: Double = 0,
         cost: Int = 1,
@@ -38,7 +38,7 @@ public final class SkillNode: Identifiable, Equatable {
     ) {
         self.id = id
         self.title = title
-        self.sphere = sphere
+        self.attribute = attribute
         self.posX = posX
         self.posY = posY
         self.cost = cost
@@ -53,7 +53,11 @@ public final class SkillUnlock: Identifiable, Equatable {
     public var nodeId: UUID = UUID()
     public var unlockedAt: Date = Date.now
     
-    public init(id: UUID = UUID(), nodeId: UUID, unlockedAt: Date = .now) {
+    public init(
+        id: UUID = UUID(),
+        nodeId: UUID,
+        unlockedAt: Date = Date.now
+    ) {
         self.id = id
         self.nodeId = nodeId
         self.unlockedAt = unlockedAt

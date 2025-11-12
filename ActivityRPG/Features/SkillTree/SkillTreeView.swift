@@ -67,7 +67,7 @@ struct SkillTreeView: View {
                         )
                         NodeView(
                             title: node.title,
-                            sphere: node.sphere,
+                            attribute: node.attribute,
                             isUnlocked: viewStore.unlocked.contains(node.id),
                             isSelected: viewStore.selected == node.id
                         )
@@ -107,7 +107,7 @@ struct SkillTreeView: View {
 
 private struct NodeView: View {
     let title: String
-    let sphere: Sphere
+    let attribute: Attribute
     let isUnlocked: Bool
     let isSelected: Bool
 
@@ -115,7 +115,7 @@ private struct NodeView: View {
         VStack(spacing: 4) {
             Circle()
                 .strokeBorder(isUnlocked ? Color.green : Color.gray, lineWidth: isSelected ? 4 : 2)
-                .background(Circle().fill(color(for: sphere).opacity(0.2)))
+                .background(Circle().fill(color(for: attribute).opacity(0.2)))
                 .frame(width: isSelected ? 56 : 44, height: isSelected ? 56 : 44)
             Text(title)
                 .font(.caption)
@@ -125,7 +125,7 @@ private struct NodeView: View {
         .transaction { $0.animation = nil }
     }
 
-    private func color(for s: Sphere) -> Color {
+    private func color(for s: Attribute) -> Color {
         switch s {
         case .agility:
             return Color.blue
