@@ -16,7 +16,8 @@ struct ActivityRPGApp: App {
             [
                 SkillNode.self,
                 SkillUnlock.self,
-                Workout.self
+                Workout.self,
+                ExerciseModel.self
             ]
         )
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)

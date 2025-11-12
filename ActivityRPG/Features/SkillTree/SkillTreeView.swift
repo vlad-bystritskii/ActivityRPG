@@ -21,7 +21,7 @@ struct SkillTreeView: View {
             GeometryReader { proxy in
                 Color.clear.onAppear {
                     baseOffset = viewStore.offset
-                    baseScale  = viewStore.scale
+                    baseScale = viewStore.scale
                 }
                 .onChange(of: viewStore.offset) { _, offset in
                     baseOffset = offset
@@ -30,7 +30,7 @@ struct SkillTreeView: View {
                     baseScale = scale
                 }
 
-                let currentScale  = (baseScale * pinch).clamped(0.5, 2.0)
+                let currentScale = (baseScale * pinch).clamped(0.5, 2.0)
                 let currentOffset = CGPoint(
                     x: baseOffset.x + drag.width,
                     y: baseOffset.y + drag.height

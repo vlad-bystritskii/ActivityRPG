@@ -20,10 +20,10 @@ public final class SkillNode: Identifiable, Equatable {
     @Attribute(.unique) public var id: UUID = UUID()
     public var title: String = ""
     public var sphere: Sphere = Sphere.agility
-    public var posX: Double = 0             
+    public var posX: Double = 0
     public var posY: Double = 0
     public var cost: Int = 1
-    public var requires: [UUID] = []         
+    public var requires: [UUID] = []
     public var effectsJSON: String? = nil
     
     public init(

@@ -11,7 +11,7 @@ import SwiftData
 private enum ModelContainerKey: DependencyKey {
   static let liveValue: ModelContainer = {
     try! ModelContainer(
-      for: Schema([SkillNode.self, SkillUnlock.self]),
+      for: Schema([SkillNode.self, SkillUnlock.self, ExerciseModel.self]),
       configurations: [ModelConfiguration(isStoredInMemoryOnly: true)]
     )
   }()

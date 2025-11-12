@@ -48,11 +48,11 @@ enum SkillSeed {
                 let (x, y) = polar(angle, r)
 
                 let n = SkillNode()
-                n.title  = "\(title) \(i)"
+                n.title = "\(title) \(i)"
                 n.sphere = sphere
-                n.posX   = x
-                n.posY   = y
-                n.cost   = (i % 3 == 0) ? 2 : 1
+                n.posX = x
+                n.posY = y
+                n.cost = (i % 3 == 0) ? 2 : 1
 
                 if let p = prev {
                     n.requires = [p.id]
@@ -85,7 +85,7 @@ enum SkillSeed {
         let strength = makeBranch(
             title: "Сила",
             sphere: .strength,
-            angle:   0
+            angle: 0
         )
         let flexibility = makeBranch(
             title: "Гибкость",
@@ -95,7 +95,7 @@ enum SkillSeed {
         let endurance = makeBranch(
             title: "Выносливость",
             sphere: .endurance,
-            angle:  90
+            angle: 90
         )
 
 
